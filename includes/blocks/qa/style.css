@@ -1,0 +1,40 @@
+/* AgentGarrison "AI Q&A" block — front-end + editor. */
+.agentgarrison-qa {
+	margin: 1em 0;
+	border: 1px solid #e0e8ea;
+	border-radius: 8px;
+	padding: 14px 18px;
+	background: #fff;
+}
+
+.agentgarrison-qa > summary,
+.agentgarrison-qa .agentgarrison-qa__question {
+	font-weight: 700;
+	cursor: pointer;
+	list-style: none;
+}
+
+.agentgarrison-qa > summary::-webkit-details-marker {
+	display: none;
+}
+
+.agentgarrison-qa > summary::before {
+	content: "\203A";
+	display: inline-block;
+	margin-right: 8px;
+	transition: transform 0.15s ease;
+}
+
+.agentgarrison-qa[open] > summary::before {
+	transform: rotate(90deg);
+}
+
+.agentgarrison-qa__answer {
+	margin-top: 10px;
+	line-height: 1.6;
+}
+
+/* Editor: the block is a div (not <details>), so keep the answer always visible. */
+.agentgarrison-qa--editor .agentgarrison-qa__question::before {
+	content: none;
+}

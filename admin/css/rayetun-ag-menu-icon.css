@@ -1,0 +1,33 @@
+/**
+ * AgentGarrison admin-menu icon.
+ *
+ * Loaded on every admin page so the top-level menu icon can react to hover,
+ * focus, and the current-page state like WordPress's own menu icons do.
+ *
+ * The icon is a single-colour shield silhouette (the check mark is knocked out
+ * of the shape) painted with a CSS mask, so one background-color renders the
+ * whole icon and we can recolour it per state.
+ */
+#adminmenu #toplevel_page_agentgarrison .wp-menu-image img {
+	display: none;
+}
+
+#adminmenu #toplevel_page_agentgarrison .wp-menu-image::before {
+	content: "";
+	display: block;
+	width: 20px;
+	height: 20px;
+	margin: 0px auto 0;
+	background-color: #a7aaad;
+	-webkit-mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTIgMiA0IDV2NmMwIDQuOSAzLjQgOS40IDggMTEgNC42LTEuNiA4LTYuMSA4LTExVjVsLTgtM3pNMTAuNyAxNC4zIDguNiAxMi4yIDcuMSAxMy43IDEwLjcgMTcuMyAxNyAxMSAxNS41IDkuNVoiLz48L3N2Zz4=") no-repeat center / 20px 20px;
+	mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTIgMiA0IDV2NmMwIDQuOSAzLjQgOS40IDggMTEgNC42LTEuNiA4LTYuMSA4LTExVjVsLTgtM3pNMTAuNyAxNC4zIDguNiAxMi4yIDcuMSAxMy43IDEwLjcgMTcuMyAxNyAxMSAxNS41IDkuNVoiLz48L3N2Zz4=") no-repeat center / 20px 20px;
+	transition: background-color 0.15s ease;
+}
+
+#adminmenu #toplevel_page_agentgarrison:hover .wp-menu-image::before,
+#adminmenu #toplevel_page_agentgarrison a:focus .wp-menu-image::before,
+#adminmenu #toplevel_page_agentgarrison.opensub .wp-menu-image::before,
+#adminmenu #toplevel_page_agentgarrison.wp-has-current-submenu .wp-menu-image::before,
+#adminmenu #toplevel_page_agentgarrison.current .wp-menu-image::before {
+	background-color: #F0A500;
+}

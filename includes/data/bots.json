@@ -1,0 +1,267 @@
+{
+  "schema_version": "1.0",
+  "updated": "2026-06-01",
+  "categories": {
+    "ai_trainer": {
+      "label": "AI Trainers",
+      "description": "Bots that collect your content to train AI language models. Block these to prevent your content being used in model training datasets. This won't affect AI search results or citations.",
+      "default": "block"
+    },
+    "ai_assistant": {
+      "label": "AI Assistants",
+      "description": "Bots from AI chat assistants like ChatGPT, Claude, and Gemini that browse the web to answer user questions. Allowing these helps your site appear in AI-generated answers.",
+      "default": "allow"
+    },
+    "ai_search": {
+      "label": "AI Search Engines",
+      "description": "Crawlers from AI-powered search engines like Perplexity and You.com. Allowing these helps your site appear in AI search results and citations.",
+      "default": "allow"
+    },
+    "seo_crawler": {
+      "label": "SEO Crawlers",
+      "description": "Bots from SEO tools like Ahrefs, Semrush, and Moz. These are used by competitors and agencies to analyse your site structure and backlinks.",
+      "default": "allow"
+    },
+    "general_scraper": {
+      "label": "General Scrapers",
+      "description": "General-purpose web scrapers and data collectors. These may collect your content for various commercial purposes without attribution.",
+      "default": "block"
+    }
+  },
+  "bots": [
+    {
+      "id": "gptbot",
+      "name": "GPTBot",
+      "user_agent": "GPTBot",
+      "company": "OpenAI",
+      "category": "ai_trainer",
+      "description": "OpenAI's web crawler used to train GPT models including ChatGPT.",
+      "verify_domain": "openai.com"
+    },
+    {
+      "id": "chatgpt-user",
+      "name": "ChatGPT-User",
+      "user_agent": "ChatGPT-User",
+      "company": "OpenAI",
+      "category": "ai_assistant",
+      "description": "ChatGPT's browsing plugin — fetches pages when a user asks ChatGPT to browse the web.",
+      "verify_domain": "openai.com"
+    },
+    {
+      "id": "claudebot",
+      "name": "ClaudeBot",
+      "user_agent": "ClaudeBot",
+      "company": "Anthropic",
+      "category": "ai_trainer",
+      "description": "Anthropic's web crawler used to gather training data for Claude models.",
+      "verify_domain": "anthropic.com"
+    },
+    {
+      "id": "claude-web",
+      "name": "Claude Web",
+      "user_agent": "claude-web",
+      "company": "Anthropic",
+      "category": "ai_assistant",
+      "description": "Claude's web browsing capability for answering real-time questions.",
+      "verify_domain": "anthropic.com"
+    },
+    {
+      "id": "google-extended",
+      "name": "Google-Extended",
+      "user_agent": "Google-Extended",
+      "company": "Google",
+      "category": "ai_trainer",
+      "description": "Google's dedicated token for AI training data (Gemini, Bard). Separate from Googlebot.",
+      "verify_domain": "google.com"
+    },
+    {
+      "id": "perplexitybot",
+      "name": "PerplexityBot",
+      "user_agent": "PerplexityBot",
+      "company": "Perplexity AI",
+      "category": "ai_search",
+      "description": "Perplexity AI's crawler for its AI-powered search engine.",
+      "verify_domain": "perplexity.ai"
+    },
+    {
+      "id": "bytespider",
+      "name": "Bytespider",
+      "user_agent": "Bytespider",
+      "company": "ByteDance",
+      "category": "ai_trainer",
+      "description": "ByteDance (TikTok parent company) web crawler used for AI model training.",
+      "verify_domain": "bytedance.com"
+    },
+    {
+      "id": "ccbot",
+      "name": "CCBot",
+      "user_agent": "CCBot",
+      "company": "Common Crawl",
+      "category": "ai_trainer",
+      "description": "Common Crawl foundation bot. Its datasets are used to train most major LLMs.",
+      "verify_domain": "commoncrawl.org"
+    },
+    {
+      "id": "diffbot",
+      "name": "Diffbot",
+      "user_agent": "Diffbot",
+      "company": "Diffbot",
+      "category": "ai_trainer",
+      "description": "Diffbot's crawler for building AI-powered knowledge graphs from web content.",
+      "verify_domain": "diffbot.com"
+    },
+    {
+      "id": "amazonbot",
+      "name": "Amazonbot",
+      "user_agent": "Amazonbot",
+      "company": "Amazon",
+      "category": "ai_trainer",
+      "description": "Amazon's web crawler for Alexa and Amazon AI services.",
+      "verify_domain": "amazon.com"
+    },
+    {
+      "id": "applebot-extended",
+      "name": "Applebot-Extended",
+      "user_agent": "Applebot-Extended",
+      "company": "Apple",
+      "category": "ai_trainer",
+      "description": "Apple's dedicated crawler for AI training data (Apple Intelligence, Siri).",
+      "verify_domain": "apple.com"
+    },
+    {
+      "id": "youbot",
+      "name": "YouBot",
+      "user_agent": "YouBot",
+      "company": "You.com",
+      "category": "ai_search",
+      "description": "You.com AI search engine crawler.",
+      "verify_domain": "you.com"
+    },
+    {
+      "id": "petalbot",
+      "name": "PetalBot",
+      "user_agent": "PetalBot",
+      "company": "Huawei",
+      "category": "ai_search",
+      "description": "Huawei's Petal Search crawler used for its AI-powered search engine.",
+      "verify_domain": "huawei.com"
+    },
+    {
+      "id": "imagesiftbot",
+      "name": "ImagesiftBot",
+      "user_agent": "ImagesiftBot",
+      "company": "Imagesift",
+      "category": "ai_trainer",
+      "description": "Image collection bot that scrapes images for AI training datasets.",
+      "verify_domain": ""
+    },
+    {
+      "id": "omgilibot",
+      "name": "Omgilibot",
+      "user_agent": "omgili",
+      "company": "Webz.io",
+      "category": "general_scraper",
+      "description": "Webz.io data collection bot used to power commercial web data feeds.",
+      "verify_domain": "webz.io"
+    },
+    {
+      "id": "anthropic-ai",
+      "name": "anthropic-ai",
+      "user_agent": "anthropic-ai",
+      "company": "Anthropic",
+      "category": "ai_trainer",
+      "description": "Anthropic's supplemental data collection crawler.",
+      "verify_domain": "anthropic.com"
+    },
+    {
+      "id": "cohere-ai",
+      "name": "cohere-ai",
+      "user_agent": "cohere-ai",
+      "company": "Cohere",
+      "category": "ai_trainer",
+      "description": "Cohere's web crawler for training its enterprise LLM models.",
+      "verify_domain": "cohere.com"
+    },
+    {
+      "id": "iaskspider",
+      "name": "iaskSpider",
+      "user_agent": "iaskSpider",
+      "company": "iAsk.ai",
+      "category": "ai_search",
+      "description": "iAsk.ai search engine crawler.",
+      "verify_domain": "iask.ai"
+    },
+    {
+      "id": "semrushbot",
+      "name": "SemrushBot",
+      "user_agent": "SemrushBot",
+      "company": "Semrush",
+      "category": "seo_crawler",
+      "description": "Semrush's SEO analysis crawler used for keyword research and backlink data.",
+      "verify_domain": "semrush.com"
+    },
+    {
+      "id": "ahrefsbot",
+      "name": "AhrefsBot",
+      "user_agent": "AhrefsBot",
+      "company": "Ahrefs",
+      "category": "seo_crawler",
+      "description": "Ahrefs' web crawler powering its backlink index and SEO tools.",
+      "verify_domain": "ahrefs.com"
+    },
+    {
+      "id": "dotbot",
+      "name": "DotBot",
+      "user_agent": "DotBot",
+      "company": "Moz",
+      "category": "seo_crawler",
+      "description": "Moz's web crawler used to power Open Site Explorer and link metrics.",
+      "verify_domain": "moz.com"
+    },
+    {
+      "id": "rogerbot",
+      "name": "Rogerbot",
+      "user_agent": "rogerbot",
+      "company": "Moz",
+      "category": "seo_crawler",
+      "description": "Moz's site crawl and link analysis bot.",
+      "verify_domain": "moz.com"
+    },
+    {
+      "id": "timpibot",
+      "name": "Timpibot",
+      "user_agent": "Timpibot",
+      "company": "Timpi",
+      "category": "general_scraper",
+      "description": "General-purpose web crawler for data collection.",
+      "verify_domain": ""
+    },
+    {
+      "id": "meta-externalagent",
+      "name": "Meta-ExternalAgent",
+      "user_agent": "Meta-ExternalAgent",
+      "company": "Meta",
+      "category": "ai_trainer",
+      "description": "Meta's crawler for AI training data used in Llama and other Meta AI models.",
+      "verify_domain": "meta.com"
+    },
+    {
+      "id": "facebookexternalhit",
+      "name": "facebookexternalhit",
+      "user_agent": "facebookexternalhit",
+      "company": "Meta",
+      "category": "ai_assistant",
+      "description": "Meta's link preview crawler also used by Meta AI assistant for real-time data.",
+      "verify_domain": "facebook.com"
+    },
+    {
+      "id": "ia-archiver",
+      "name": "ia_archiver",
+      "user_agent": "ia_archiver",
+      "company": "Internet Archive",
+      "category": "general_scraper",
+      "description": "Internet Archive's Wayback Machine crawler. Archives web pages for public access.",
+      "verify_domain": "archive.org"
+    }
+  ]
+}

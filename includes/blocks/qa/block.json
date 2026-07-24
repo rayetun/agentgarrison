@@ -1,0 +1,32 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agentgarrison/qa",
+	"version": "1.0.0",
+	"title": "AI Q&A",
+	"category": "text",
+	"icon": "editor-help",
+	"description": "A question and answer pair that reads well for humans and is picked up as FAQ structured data for AI. Renders as a native collapsible block.",
+	"keywords": [ "faq", "question", "answer", "ai", "llm" ],
+	"textdomain": "agentgarrison",
+	"attributes": {
+		"question": {
+			"type": "string",
+			"source": "html",
+			"selector": "summary",
+			"default": ""
+		},
+		"answer": {
+			"type": "string",
+			"source": "html",
+			"selector": ".agentgarrison-qa__answer",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css"
+}

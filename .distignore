@@ -1,0 +1,23 @@
+# A set of files you don't want included in the WordPress.org distribution
+# (the plugin zip pushed to SVN). Everything listed here stays in your GitHub
+# repo but is stripped out of the deployed plugin.
+
+# Directories
+/.git
+/.github
+/.wordpress-org
+/node_modules
+/vendor
+
+# Files
+/.gitignore
+/.gitattributes
+/.distignore
+/.editorconfig
+/README.md
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+/phpcs.xml
+/phpcs.xml.dist
