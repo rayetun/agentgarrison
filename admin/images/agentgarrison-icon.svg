@@ -15,28 +15,27 @@
 
   <rect width="256" height="256" rx="56" fill="url(#bg)"></rect>
 
-  <g transform="translate(128,130) scale(1.24) translate(-128,-128)">
   <g filter="url(#glow)">
     <path fill="url(#shield)" stroke="rgba(255,255,255,0.25)" stroke-width="3" d="M 133 60&#xA;         L 195 88&#xA;         L 195 152&#xA;         C 195 195 164 221 133 232&#xA;         C 102 221 71 195 71 152&#xA;         L 71 88 Z" transform="translate(-5,-4)"></path>
   </g>
 
-  
+
   <g fill="#eaf6f7">
-    
+
     <rect x="124.5" y="88" width="7" height="20" rx="3.5"></rect>
     <circle cx="128" cy="86" r="8"></circle>
-    
+
     <rect x="99" y="108" width="58" height="46" rx="15"></rect>
   </g>
   <g fill="#0e2430">
-    
+
     <circle cx="115" cy="129" r="6"></circle>
     <circle cx="141" cy="129" r="6"></circle>
   </g>
   <g stroke="#0e2430" stroke-width="3.4" stroke-linecap="round">
-    
+
     <line x1="119" y1="143" x2="119" y2="149"></line>
     <line x1="128" y1="143" x2="128" y2="149"></line>
     <line x1="137" y1="143" x2="137" y2="149"></line>
   </g>
-</g></svg>
+</svg>
