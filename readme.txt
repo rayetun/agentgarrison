@@ -15,11 +15,12 @@ See whether AI assistants cite your site, control which AI bots can crawl it, an
 
 **AgentGarrison** is an AI visibility toolkit for WordPress. It helps your site get discovered, understood, and cited by AI assistants such as ChatGPT, Perplexity, Gemini, and Claude, while giving you precise control over which AI crawlers can access your content.
 
-Its standout feature is the **Citation Monitor**: it queries AI assistants for your target questions and reports whether your site is actually cited, with a per-competitor breakdown, so you can measure and track your AI visibility over time — not only publish signals for AI to read, but see the result.
+**Citation Monitor is the standout feature of AgentGarrison:** it queries AI assistants for your target questions and reports whether your site is actually cited, with a per-competitor breakdown, so you can measure and track your AI visibility over time — not only publish signals for AI to read, but see the result.
 
-It combines thirteen modules in one plugin: AI bot access control, llms.txt generation with a built-in validator, Markdown output for AI agents, an AI-ready Q&A block, local bot analytics with a live activity feed, LLM referral tracking, an AI readability content scorer, structured data with E-E-A-T trust signals, a citation monitor, a honeypot bot trap, email reports, white-label reports, and a composite AI Visibility Score.
+**It combines thirteen modules in one plugin:** AI bot access control, llms.txt generation with a built-in validator, Markdown output for AI agents, an AI-ready Q&A block, local bot analytics with a live activity feed, LLM referral tracking, an AI readability content scorer, structured data with E-E-A-T trust signals, a citation monitor, a honeypot bot trap, email reports, white-label reports, and a composite AI Visibility Score.
 
-Everything runs on your own WordPress install: analytics, logs, and settings are stored in your own database. The only feature that can reach out to an AI provider is the optional Citation Monitor, and it is built for the WordPress 7.0 AI Client: when the site owner configures a provider under Settings → Connectors, AgentGarrison uses the core AI Client and never handles credentials itself. On WordPress 6.x (or when no core provider is set up) it falls back to your own API key. Every other feature works with no account and no external service.
+**Everything runs on your own WordPress install:** analytics, logs, and settings are stored in your own database. The only feature that can reach out to an AI provider is the optional Citation Monitor, and it is built for the WordPress 7.0 AI Client: when the site owner configures a provider under Settings → Connectors, AgentGarrison uses the core AI Client and never handles credentials itself. 
+On WordPress 6.x (or when no core provider is set up) it falls back to your own API key. Every other feature works with no account and no external service.
 
 = How AgentGarrison is organised =
 
@@ -175,7 +176,7 @@ A single composite 0–100 score — shown on the dashboard as a ring gauge — 
 == Frequently Asked Questions ==
 
 = Does AgentGarrison require an external account or API key? =
-No. Every free feature works entirely on your WordPress install. No account, no API key, no data sent to external servers.
+No external account is needed. Every feature works entirely on your WordPress install. No account, no API key, no data sent to external servers. API keys are only needed if you want live citation data from real AI platforms.
 
 = Will this conflict with Yoast SEO or Rank Math? =
 No. AgentGarrison is designed to work alongside your existing SEO plugin. The llms.txt and robots.txt modules use WordPress filter hooks and do not overwrite any files directly.

@@ -15,7 +15,7 @@
 
   <rect width="256" height="256" rx="56" fill="url(#bg)"></rect>
 
-  <g transform="translate(128,130) scale(1.24) translate(-128,-128)">
+  <g transform="translate(128,110) scale(1.3) translate(-128,-128)">
   <g filter="url(#glow)">
     <path fill="url(#shield)" stroke="rgba(255,255,255,0.25)" stroke-width="3" d="M 133 60&#xA;         L 195 88&#xA;         L 195 152&#xA;         C 195 195 164 221 133 232&#xA;         C 102 221 71 195 71 152&#xA;         L 71 88 Z" transform="translate(-5,-4)"></path>
   </g>
