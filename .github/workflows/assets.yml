@@ -10,6 +10,9 @@ on:
     paths:
       - 'readme.txt'
       - '.wordpress-org/**'
+  # Allows running this workflow manually from the Actions tab or the CLI,
+  # e.g. to push asset changes that landed in an earlier commit.
+  workflow_dispatch:
 
 jobs:
   assets:
