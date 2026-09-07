@@ -33,6 +33,7 @@ final class Rayetun_AG_Core {
 		// Always load all module files so AJAX handlers register unconditionally.
 		require_once RAYETUN_AG_DIR . 'includes/modules/class-rayetun-ag-bot-control.php';
 		require_once RAYETUN_AG_DIR . 'includes/modules/class-rayetun-ag-agent-control.php';
+		require_once RAYETUN_AG_DIR . 'includes/modules/class-rayetun-ag-mcp.php';
 		require_once RAYETUN_AG_DIR . 'includes/modules/class-rayetun-ag-llms-txt.php';
 		require_once RAYETUN_AG_DIR . 'includes/modules/class-rayetun-ag-analytics.php';
 		require_once RAYETUN_AG_DIR . 'includes/modules/class-rayetun-ag-referral-tracker.php';
@@ -73,6 +74,7 @@ final class Rayetun_AG_Core {
 	public function boot_modules() {
 		Rayetun_AG_Bot_Control::get_instance();
 		Rayetun_AG_Agent_Control::get_instance();
+		Rayetun_AG_MCP::get_instance();
 		Rayetun_AG_Llms_Txt::get_instance();
 		Rayetun_AG_Analytics::get_instance();
 		Rayetun_AG_Referral_Tracker::get_instance();

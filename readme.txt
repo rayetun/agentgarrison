@@ -17,7 +17,7 @@ See whether AI assistants cite your site, control which AI bots can crawl it, an
 
 **Citation Monitor is the standout feature of AgentGarrison:** it queries AI assistants for your target questions and reports whether your site is actually cited, with a per-competitor breakdown, so you can measure and track your AI visibility over time — not only publish signals for AI to read, but see the result.
 
-**It combines fourteen modules in one plugin:** AI bot access control, AI agent control (Abilities/MCP governance for WordPress 7.1), llms.txt generation with a built-in validator, Markdown output for AI agents, an AI-ready Q&A block, local bot analytics with a live activity feed, LLM referral tracking, an AI readability content scorer, structured data with E-E-A-T trust signals, a citation monitor, a honeypot bot trap, email reports, white-label reports, and a composite AI Visibility Score.
+**It combines fifteen modules in one plugin:** AI bot access control, AI agent control (Abilities/MCP governance for WordPress 7.1), read-only MCP content tools for AI agents, llms.txt generation with a built-in validator, Markdown output for AI agents, an AI-ready Q&A block, local bot analytics with a live activity feed, LLM referral tracking, an AI readability content scorer, structured data with E-E-A-T trust signals, a citation monitor, a honeypot bot trap, email reports, white-label reports, and a composite AI Visibility Score.
 
 **Everything runs on your own WordPress install:** analytics, logs, and settings are stored in your own database. The only feature that can reach out to an AI provider is the optional Citation Monitor, and it is built for the WordPress 7.0 AI Client: when the site owner configures a provider under Settings → Connectors, AgentGarrison uses the core AI Client and never handles credentials itself. 
 On WordPress 6.x (or when no core provider is set up) it falls back to your own API key. Every other feature works with no account and no external service.
@@ -54,6 +54,17 @@ WordPress 7.1 introduced the Abilities API mapped onto MCP, so AI agents can now
 * **Non-invasive by default** — AgentGarrison does not change what agents can reach unless you explicitly opt in to managing exposure, so activation never disrupts an existing MCP setup.
 * **Agent activity log** — every Ability execution is recorded locally (which Ability, who triggered it, from where, and the outcome), giving you a full audit trail. Pruned automatically on your data-retention schedule.
 * **Runs on any version** — the module is dormant and harmless on WordPress 6.x; it begins governing and logging automatically once the Abilities API is present.
+
+---
+
+= 🔌 MCP for Agents =
+
+Let AI agents *query* your published content over the Model Context Protocol, using the standard WordPress Abilities API — no scraping. AgentGarrison registers three read-only tools and marks them public for MCP, so when an MCP adapter is active, agents can discover and call them.
+
+* **Three read-only tools** — search your published posts/pages, fetch any page as clean Markdown (by URL or ID), and get a site overview (name, description, recent content).
+* **Public content only** — drafts, private, password-protected, and any post you exclude from llms.txt are never exposed. No admin actions, settings, or user data are reachable.
+* **Standard Abilities API** — registered under the `agentgarrison` ability namespace, so they appear in — and are governed by — Agent Control alongside every other Ability on your site.
+* **Zero-config & dormant-safe** — activates automatically on WordPress 6.9+ where the Abilities API exists; a harmless no-op on older versions.
 
 ---
 
@@ -231,6 +242,9 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 6. Settings — Premium module toggle screen
 
 == Changelog ==
+
+= 1.2.0 =
+* New module — MCP for Agents: registers your published content as read-only WordPress Abilities (search content, page-as-Markdown, site overview) so AI agents can query your site over MCP. Governed by Agent Control and exposes only already-public content.
 
 = 1.1.0 =
 * New module — AI Agent Control: governs which site Abilities are exposed to AI agents over MCP (WordPress 7.1 Abilities API), with category-level and per-Ability allow/block controls (grouped like Bot Control) and a master exposure switch that is off by default. Non-invasive — it never alters exposure unless you opt in to managing it.

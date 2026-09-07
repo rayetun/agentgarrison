@@ -14,6 +14,7 @@ class Rayetun_AG_Modules {
 	private static $defaults = array(
 		'bot_control'      => true,
 		'agent_control'    => true,
+		'mcp'              => true,
 		'llms_txt'         => true,
 		'analytics'        => true,
 		'referral_tracker' => true,
@@ -63,6 +64,11 @@ class Rayetun_AG_Modules {
 				'label'       => __( 'Agent Control', 'agentgarrison' ),
 				'description' => __( 'Govern which site Abilities AI agents can access over MCP (WordPress 7.1+), and keep an audit log of every agent action. Extends Bot Control into the write/act era.', 'agentgarrison' ),
 				'icon'        => '🛡️',
+			),
+			'mcp' => array(
+				'label'       => __( 'MCP for Agents', 'agentgarrison' ),
+				'description' => __( 'Register your published content as read-only WordPress Abilities (search, page-as-Markdown, site overview) so AI agents can query your site over MCP. Governed by Agent Control.', 'agentgarrison' ),
+				'icon'        => '🔌',
 			),
 			'llms_txt' => array(
 				'label'       => __( 'llms.txt Generator', 'agentgarrison' ),
