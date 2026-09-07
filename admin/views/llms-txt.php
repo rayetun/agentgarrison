@@ -45,6 +45,11 @@ $rayetun_ag_selected_types = (array) ( $rayetun_ag_llms_settings['post_types'] ?
 			<?php esc_html_e( 'View llms.txt ↗', 'agentgarrison' ); ?>
 		</a>
 	</div>
+		<?php if ( $rayetun_ag_health_ok && ! empty( $rayetun_ag_llms_health['alert'] ) ) : ?>
+		<div class="agentgarrison-callout agentgarrison-callout--info">
+			⚠️ <?php echo esc_html( $rayetun_ag_llms_health['alert'] ); ?>
+		</div>
+		<?php endif; ?>
 	<?php endif; ?>
 
 	<?php
@@ -214,4 +219,73 @@ $rayetun_ag_selected_types = (array) ( $rayetun_ag_llms_settings['post_types'] ?
 
 		</div>
 	</div>
+
+	<!-- Change History -->
+	<?php
+	$rayetun_ag_llms_history = $rayetun_ag_llms->get_history( 15 );
+	if ( ! empty( $rayetun_ag_llms_history ) ) :
+		$rayetun_ag_hist_total = count( $rayetun_ag_llms_history );
+	?>
+	<div class="agentgarrison-card">
+		<div class="agentgarrison-card__header">
+			<div>
+				<h2 class="agentgarrison-card__title"><?php esc_html_e( 'Change History', 'agentgarrison' ); ?></h2>
+				<p class="agentgarrison-card__desc"><?php esc_html_e( 'A snapshot is logged each time your llms.txt changes or its reachability flips. Watch for unexpected drops in pages — AgentGarrison emails you if the file breaks or loses a large share of its pages.', 'agentgarrison' ); ?></p>
+			</div>
+		</div>
+		<table class="agentgarrison-table">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'When', 'agentgarrison' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'agentgarrison' ); ?></th>
+					<th><?php esc_html_e( 'Pages', 'agentgarrison' ); ?></th>
+					<th><?php esc_html_e( 'Size', 'agentgarrison' ); ?></th>
+					<th><?php esc_html_e( 'Est. Tokens', 'agentgarrison' ); ?></th>
+					<th><?php esc_html_e( 'Change', 'agentgarrison' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $rayetun_ag_llms_history as $rayetun_ag_i => $rayetun_ag_snap ) :
+					$rayetun_ag_older = ( $rayetun_ag_i + 1 < $rayetun_ag_hist_total ) ? $rayetun_ag_llms_history[ $rayetun_ag_i + 1 ] : null;
+					$rayetun_ag_ok    = ! empty( $rayetun_ag_snap['ok'] );
+					$rayetun_ag_delta = $rayetun_ag_older ? ( (int) $rayetun_ag_snap['links'] - (int) $rayetun_ag_older['links'] ) : 0;
+
+					if ( ! $rayetun_ag_ok ) {
+						$rayetun_ag_change = esc_html__( 'Became unreachable', 'agentgarrison' );
+					} elseif ( $rayetun_ag_older && empty( $rayetun_ag_older['ok'] ) ) {
+						$rayetun_ag_change = esc_html__( 'Recovered', 'agentgarrison' );
+					} elseif ( $rayetun_ag_delta > 0 ) {
+						/* translators: %d: number of pages added */
+						$rayetun_ag_change = sprintf( esc_html__( '+%d pages', 'agentgarrison' ), $rayetun_ag_delta );
+					} elseif ( $rayetun_ag_delta < 0 ) {
+						/* translators: %d: number of pages removed */
+						$rayetun_ag_change = sprintf( esc_html__( '−%d pages', 'agentgarrison' ), abs( $rayetun_ag_delta ) );
+					} elseif ( null === $rayetun_ag_older ) {
+						$rayetun_ag_change = esc_html__( 'First snapshot', 'agentgarrison' );
+					} else {
+						$rayetun_ag_change = esc_html__( 'Content edited', 'agentgarrison' );
+					}
+				?>
+				<tr>
+					<td class="agentgarrison-last-seen">
+						<?php
+						/* translators: %s: human time diff */
+						printf( esc_html__( '%s ago', 'agentgarrison' ), esc_html( human_time_diff( (int) $rayetun_ag_snap['time'], time() ) ) );
+						?>
+					</td>
+					<td>
+						<span class="agentgarrison-status-pill <?php echo $rayetun_ag_ok ? 'is-allowed' : 'is-blocked'; ?>">
+							<?php echo $rayetun_ag_ok ? esc_html__( 'OK', 'agentgarrison' ) : esc_html( 'HTTP ' . (int) $rayetun_ag_snap['status'] ); ?>
+						</span>
+					</td>
+					<td><?php echo absint( $rayetun_ag_snap['links'] ); ?></td>
+					<td><?php echo esc_html( size_format( (int) $rayetun_ag_snap['bytes'] ) ); ?></td>
+					<td><?php echo esc_html( number_format_i18n( (int) $rayetun_ag_snap['tokens'] ) ); ?></td>
+					<td><?php echo esc_html( $rayetun_ag_change ); ?></td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+	<?php endif; ?>
 </div>

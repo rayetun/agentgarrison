@@ -32,6 +32,8 @@ $rayetun_ag_options = array(
 	'rayetun_ag_general_settings',
 	'rayetun_ag_visibility_score_cache',
 	'rayetun_ag_llms_health',
+	'rayetun_ag_llms_history',
+	'rayetun_ag_llms_alert',
 	'rayetun_ag_digest_settings',
 	'rayetun_ag_citation_api_keys',
 	'rayetun_ag_citation_settings',

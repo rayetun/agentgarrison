@@ -48,23 +48,13 @@ Take back control of who can crawl your site. AgentGarrison ships with a built-i
 
 = 🛡️ AI Agent Control (WordPress 7.1) =
 
-WordPress 7.1 introduced the Abilities API mapped onto MCP, so AI agents can now *discover and run actions* on your site — not just read it. Agent Control is the write/act counterpart to Bot Control.
-
-* **MCP exposure governance** — decide which Abilities AI agents may access over MCP: allow or block a whole category (namespace) at once, or override individual Abilities, exactly like Bot Control. Built on the core `mcp_exposed_abilities` filter, with a master switch that exposes nothing until you turn it on.
-* **Non-invasive by default** — AgentGarrison does not change what agents can reach unless you explicitly opt in to managing exposure, so activation never disrupts an existing MCP setup.
-* **Agent activity log** — every Ability execution is recorded locally (which Ability, who triggered it, from where, and the outcome), giving you a full audit trail. Pruned automatically on your data-retention schedule.
-* **Runs on any version** — the module is dormant and harmless on WordPress 6.x; it begins governing and logging automatically once the Abilities API is present.
+WordPress 7.1 mapped the Abilities API onto MCP, so AI agents can now *run actions* on your site — not just read it. Agent Control is the write/act counterpart to Bot Control: govern which Abilities agents may access over MCP (allow or block a whole category, or override individual Abilities — built on the core `mcp_exposed_abilities` filter, off by default so activation never disrupts an existing setup), and keep a local audit log of every Ability execution (Ability, who, source, outcome), pruned on your retention schedule. Dormant on WordPress 6.x; activates automatically once the Abilities API is present.
 
 ---
 
 = 🔌 MCP for Agents =
 
-Let AI agents *query* your published content over the Model Context Protocol, using the standard WordPress Abilities API — no scraping. AgentGarrison registers three read-only tools and marks them public for MCP, so when an MCP adapter is active, agents can discover and call them.
-
-* **Three read-only tools** — search your published posts/pages, fetch any page as clean Markdown (by URL or ID), and get a site overview (name, description, recent content).
-* **Public content only** — drafts, private, password-protected, and any post you exclude from llms.txt are never exposed. No admin actions, settings, or user data are reachable.
-* **Standard Abilities API** — registered under the `agentgarrison` ability namespace, so they appear in — and are governed by — Agent Control alongside every other Ability on your site.
-* **Zero-config & dormant-safe** — activates automatically on WordPress 6.9+ where the Abilities API exists; a harmless no-op on older versions.
+Let AI agents *query* your published content over the Model Context Protocol, using the standard WordPress Abilities API — no scraping. Registers three read-only tools (search content, fetch a page as clean Markdown, site overview) under the `agentgarrison` namespace, so Agent Control governs them alongside every other Ability. Only already-public content is exposed — drafts, private, password-protected, and llms.txt-excluded posts never are. Activates automatically on WordPress 6.9+; a no-op on older versions.
 
 ---
 
@@ -245,6 +235,7 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 
 = 1.2.0 =
 * New module — MCP for Agents: registers your published content as read-only WordPress Abilities (search content, page-as-Markdown, site overview) so AI agents can query your site over MCP. Governed by Agent Control and exposes only already-public content.
+* llms.txt — change history & drift alerts: logs a snapshot each time your llms.txt changes or its reachability flips, shown on the llms.txt screen, and emails you if the file breaks or unexpectedly loses a large share of its pages.
 
 = 1.1.0 =
 * New module — AI Agent Control: governs which site Abilities are exposed to AI agents over MCP (WordPress 7.1 Abilities API), with category-level and per-Ability allow/block controls (grouped like Bot Control) and a master exposure switch that is off by default. Non-invasive — it never alters exposure unless you opt in to managing it.

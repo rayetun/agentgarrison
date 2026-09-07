@@ -491,7 +491,7 @@ class Rayetun_AG_Llms_Txt {
 	}
 
 	// -------------------------------------------------------------------------
-	// Health check
+	// Health check, change history & drift alerts
 	// -------------------------------------------------------------------------
 
 	public function run_health_check() {
@@ -500,15 +500,177 @@ class Rayetun_AG_Llms_Txt {
 
 		$url      = home_url( '/llms.txt' );
 		$response = wp_remote_get( $url, array( 'timeout' => 10, 'sslverify' => false ) );
-		$status   = is_wp_error( $response ) ? 0 : wp_remote_retrieve_response_code( $response );
-		$health   = array(
-			'ok'           => 200 === (int) $status,
-			'status_code'  => $status,
-			'checked_at'   => time(),
+		$status   = is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
+		$body     = is_wp_error( $response ) ? '' : (string) wp_remote_retrieve_body( $response );
+
+		$health = array(
+			'ok'             => 200 === $status,
+			'status_code'    => $status,
+			'checked_at'     => time(),
 			'last_generated' => $this->settings['last_generated'],
-			'stale'        => ( time() - $this->settings['last_generated'] ) > ( 7 * DAY_IN_SECONDS ),
+			'stale'          => ( time() - $this->settings['last_generated'] ) > ( 7 * DAY_IN_SECONDS ),
 		);
+
+		// Record a snapshot of what is actually being served, then evaluate whether
+		// the change (or a breakage) is worth alerting on.
+		list( $snapshot, $prev ) = $this->record_history_snapshot( $body, $status );
+		$health['links'] = $snapshot['links'];
+		$health['alert'] = $this->maybe_send_alert( $snapshot, $prev, $health );
+
 		update_option( 'rayetun_ag_llms_health', $health );
+	}
+
+	/**
+	 * Count the AI-relevant metrics of a served llms.txt body.
+	 *
+	 * @param string $content File body.
+	 * @return array{bytes:int,tokens:int,links:int,sections:int}
+	 */
+	private function count_llms_metrics( $content ) {
+		$bytes       = strlen( (string) $content );
+		$links       = 0;
+		$sections    = 0;
+		$in_excluded = false;
+
+		foreach ( explode( "\n", (string) $content ) as $line ) {
+			$t = trim( $line );
+			if ( '' === $t ) {
+				continue;
+			}
+			if ( 0 === strpos( $t, '## Excluded' ) ) {
+				$in_excluded = true;
+				continue;
+			}
+			if ( 0 === strpos( $t, '## ' ) ) {
+				$sections++;
+				continue;
+			}
+			if ( 0 === strpos( $t, '- ' ) && ! $in_excluded ) {
+				$links++;
+			}
+		}
+
+		// ~4 characters per token — the standard cross-model English heuristic.
+		return array(
+			'bytes'    => $bytes,
+			'tokens'   => (int) ceil( $bytes / 4 ),
+			'links'    => $links,
+			'sections' => $sections,
+		);
+	}
+
+	/**
+	 * Append a change-history snapshot, but only when something meaningful changed
+	 * versus the newest entry (content hash differs, or reachability flipped), so
+	 * the log stays a record of real changes rather than a heartbeat.
+	 *
+	 * @param string $content Served body.
+	 * @param int    $status  HTTP status.
+	 * @return array{0:array,1:?array} [ new snapshot, previous snapshot|null ].
+	 */
+	private function record_history_snapshot( $content, $status ) {
+		$metrics = $this->count_llms_metrics( $content );
+
+		$history = get_option( 'rayetun_ag_llms_history', array() );
+		if ( ! is_array( $history ) ) {
+			$history = array();
+		}
+		$prev = ! empty( $history ) ? $history[0] : null;
+
+		$snapshot = array(
+			'time'     => time(),
+			'status'   => (int) $status,
+			'ok'       => 200 === (int) $status,
+			'bytes'    => $metrics['bytes'],
+			'tokens'   => $metrics['tokens'],
+			'links'    => $metrics['links'],
+			'sections' => $metrics['sections'],
+			'hash'     => md5( (string) $content ),
+		);
+
+		if ( null === $prev || $prev['hash'] !== $snapshot['hash'] || $prev['ok'] !== $snapshot['ok'] ) {
+			array_unshift( $history, $snapshot );
+			$history = array_slice( $history, 0, 30 ); // Keep the last 30 changes.
+			update_option( 'rayetun_ag_llms_history', $history );
+		}
+
+		return array( $snapshot, $prev );
+	}
+
+	/**
+	 * Email an alert on a genuine problem — the file broke, or lost a large share
+	 * of its pages (a sign content was unpublished or a post type changed) — and
+	 * dedupe so the same standing issue is only sent once. Routine growth is never
+	 * alerted. Returns the current issue message (for the dashboard), or ''.
+	 *
+	 * @param array  $snapshot Latest snapshot.
+	 * @param ?array $prev     Previous snapshot.
+	 * @param array  $health   Health result.
+	 * @return string
+	 */
+	private function maybe_send_alert( $snapshot, $prev, $health ) {
+		$issue = '';
+		$sig   = '';
+
+		if ( empty( $health['ok'] ) ) {
+			/* translators: %d: HTTP status code */
+			$issue = sprintf( __( 'Your llms.txt is not reachable (HTTP %d).', 'agentgarrison' ), (int) $health['status_code'] );
+			$sig   = 'broken:' . (int) $health['status_code'];
+		} elseif ( $prev && $prev['links'] >= 5 && $snapshot['links'] < (int) ceil( $prev['links'] * 0.7 ) ) {
+			/* translators: 1: previous page count, 2: current page count */
+			$issue = sprintf( __( 'Your llms.txt dropped from %1$d to %2$d listed pages — a large, unexpected change. Check whether content was unpublished or a post type stopped being included.', 'agentgarrison' ), (int) $prev['links'], (int) $snapshot['links'] );
+			$sig   = 'shrink:' . (int) $snapshot['links'];
+		} elseif ( ! empty( $health['stale'] ) ) {
+			$issue = __( 'Your llms.txt has not regenerated in over 7 days.', 'agentgarrison' );
+			$sig   = 'stale';
+		}
+
+		$last = get_option( 'rayetun_ag_llms_alert', array() );
+
+		// Healthy again — clear the standing alert so the next issue re-notifies.
+		if ( '' === $sig ) {
+			if ( ! empty( $last ) ) {
+				delete_option( 'rayetun_ag_llms_alert' );
+			}
+			return '';
+		}
+
+		// Same issue as last time — keep showing it, but don't re-email.
+		if ( isset( $last['sig'] ) && $last['sig'] === $sig ) {
+			return $issue;
+		}
+
+		update_option( 'rayetun_ag_llms_alert', array( 'sig' => $sig, 'issue' => $issue, 'time' => time() ) );
+		$this->send_alert_email( $issue );
+		return $issue;
+	}
+
+	private function send_alert_email( $issue ) {
+		$general = get_option( 'rayetun_ag_general_settings', array() );
+		$to      = ! empty( $general['alert_email'] ) ? $general['alert_email'] : get_option( 'admin_email' );
+		if ( ! is_email( $to ) ) {
+			return;
+		}
+		/* translators: %s: site name */
+		$subject = sprintf( __( '[%s] llms.txt alert', 'agentgarrison' ), wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) );
+		$link    = admin_url( 'admin.php?page=agentgarrison&tab=llms-txt' );
+		/* translators: %s: admin URL */
+		$body    = $issue . "\n\n" . sprintf( __( 'Review it here: %s', 'agentgarrison' ), $link );
+		wp_mail( $to, $subject, $body );
+	}
+
+	/**
+	 * Recent change-history snapshots, newest first, for the admin view.
+	 *
+	 * @param int $limit Max rows.
+	 * @return array
+	 */
+	public function get_history( $limit = 15 ) {
+		$history = get_option( 'rayetun_ag_llms_history', array() );
+		if ( ! is_array( $history ) ) {
+			return array();
+		}
+		return array_slice( $history, 0, max( 1, (int) $limit ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -564,6 +726,8 @@ class Rayetun_AG_Llms_Txt {
 		delete_transient( 'rayetun_ag_llms_cache' );
 		$content = $this->generate();
 		$this->write_static_files();
+		// Log the manual regeneration in the change history (only appends if changed).
+		$this->record_history_snapshot( $content, 200 );
 		Rayetun_AG_Visibility_Score::invalidate();
 		wp_send_json_success( array(
 			'message' => __( 'llms.txt regenerated.', 'agentgarrison' ),
