@@ -13,6 +13,7 @@ class Rayetun_AG_Modules {
 
 	private static $defaults = array(
 		'bot_control'      => true,
+		'agent_control'    => true,
 		'llms_txt'         => true,
 		'analytics'        => true,
 		'referral_tracker' => true,
@@ -57,6 +58,11 @@ class Rayetun_AG_Modules {
 				'label'       => __( 'AI Bot Control', 'agentgarrison' ),
 				'description' => __( 'Control which AI bots can access your site. Auto-generates robots.txt rules with optional X-Robots-Tag header enforcement.', 'agentgarrison' ),
 				'icon'        => '🤖',
+			),
+			'agent_control' => array(
+				'label'       => __( 'Agent Control', 'agentgarrison' ),
+				'description' => __( 'Govern which site Abilities AI agents can access over MCP (WordPress 7.1+), and keep an audit log of every agent action. Extends Bot Control into the write/act era.', 'agentgarrison' ),
+				'icon'        => '🛡️',
 			),
 			'llms_txt' => array(
 				'label'       => __( 'llms.txt Generator', 'agentgarrison' ),

@@ -11,12 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Rayetun_AG_DB {
 
-	const DB_VERSION            = '1.0';
+	const DB_VERSION            = '1.1';
 	const BOT_VISITS_TABLE      = 'rayetun_ag_bot_visits';
 	const REFERRALS_TABLE       = 'rayetun_ag_llm_referrals';
 	const CITATION_KEYWORDS_TABLE = 'rayetun_ag_citation_keywords';
 	const CITATION_RESULTS_TABLE  = 'rayetun_ag_citation_results';
 	const CITATION_SCANS_TABLE    = 'rayetun_ag_citation_scans';
+	const AGENT_EVENTS_TABLE      = 'rayetun_ag_agent_events';
 
 	public static function create_tables() {
 		global $wpdb;
@@ -96,12 +97,29 @@ class Rayetun_AG_DB {
 			KEY scanned_at (scanned_at)
 		) $charset;";
 
+		// Agent activity log: one row per AI-agent ability execution (WP 7.1+).
+		// Records which ability ran, who triggered it, from where, and the outcome.
+		$events_table = $wpdb->prefix . self::AGENT_EVENTS_TABLE;
+		$sql_events   = "CREATE TABLE $events_table (
+			id         bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			ability    varchar(191) NOT NULL DEFAULT '',
+			actor_id   bigint(20) unsigned NOT NULL DEFAULT 0,
+			source     varchar(30) NOT NULL DEFAULT '',
+			result     varchar(20) NOT NULL DEFAULT '',
+			detail     text NOT NULL,
+			created_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY (id),
+			KEY ability (ability),
+			KEY created_at (created_at)
+		) $charset;";
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql_visits );
 		dbDelta( $sql_referrals );
 		dbDelta( $sql_kw );
 		dbDelta( $sql_res );
 		dbDelta( $sql_scans );
+		dbDelta( $sql_events );
 
 		update_option( 'rayetun_ag_db_version', self::DB_VERSION );
 	}

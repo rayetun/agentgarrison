@@ -18,6 +18,7 @@ $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'rayetu
 $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'rayetun_ag_citation_keywords' ) );
 $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'rayetun_ag_citation_results' ) );
 $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'rayetun_ag_citation_scans' ) );
+$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'rayetun_ag_agent_events' ) );
 // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 $rayetun_ag_options = array(
@@ -41,6 +42,7 @@ $rayetun_ag_options = array(
 	'rayetun_ag_honeypot_blocked_ips',
 	'rayetun_ag_honeypot_flush',
 	'rayetun_ag_markdown_settings',
+	'rayetun_ag_agent_settings',
 );
 foreach ( $rayetun_ag_options as $rayetun_ag_option ) {
 	delete_option( $rayetun_ag_option );
@@ -56,6 +58,7 @@ $rayetun_ag_cron_hooks = array(
 	'rayetun_ag_send_weekly_digest',
 	'rayetun_ag_send_monthly_digest',
 	'rayetun_ag_citation_scan',
+	'rayetun_ag_cleanup_agent_events',
 );
 foreach ( $rayetun_ag_cron_hooks as $rayetun_ag_hook ) {
 	$rayetun_ag_timestamp = wp_next_scheduled( $rayetun_ag_hook );

@@ -145,7 +145,7 @@ class Rayetun_AG_Admin {
 	public function render_page() {
 		$tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'dashboard'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-		$allowed_tabs = array( 'dashboard', 'bot-control', 'llms-txt', 'markdown', 'analytics', 'referrals', 'content-scorer', 'schema', 'citation-monitor', 'reports', 'settings' );
+		$allowed_tabs = array( 'dashboard', 'bot-control', 'agent-control', 'llms-txt', 'markdown', 'analytics', 'referrals', 'content-scorer', 'schema', 'citation-monitor', 'reports', 'settings' );
 		if ( ! in_array( $tab, $allowed_tabs, true ) ) {
 			$tab = 'dashboard';
 		}
@@ -159,6 +159,7 @@ class Rayetun_AG_Admin {
 		$view_map = array(
 			'dashboard'        => 'dashboard.php',
 			'bot-control'      => 'bot-control.php',
+			'agent-control'    => 'agent-control.php',
 			'llms-txt'         => 'llms-txt.php',
 			'markdown'         => 'markdown-agents.php',
 			'analytics'        => 'analytics.php',
@@ -196,6 +197,7 @@ class Rayetun_AG_Admin {
 	public static function tab_module_map() {
 		return array(
 			'bot-control'      => 'bot_control',
+			'agent-control'    => 'agent_control',
 			'llms-txt'         => 'llms_txt',
 			'markdown'         => 'markdown_agents',
 			'analytics'        => 'analytics',
@@ -211,6 +213,7 @@ class Rayetun_AG_Admin {
 		$nav_items = array(
 			'dashboard'      => array( 'label' => __( 'Dashboard', 'agentgarrison' ), 'icon' => '🏠' ),
 			'bot-control'    => array( 'label' => __( 'Bot Control', 'agentgarrison' ), 'icon' => '🤖' ),
+			'agent-control'  => array( 'label' => __( 'Agent Control', 'agentgarrison' ), 'icon' => '🛡️' ),
 			'llms-txt'       => array( 'label' => __( 'llms.txt', 'agentgarrison' ), 'icon' => '📄' ),
 			'markdown'       => array( 'label' => __( 'Markdown', 'agentgarrison' ), 'icon' => '📝' ),
 			'analytics'      => array( 'label' => __( 'Analytics', 'agentgarrison' ), 'icon' => '📊' ),

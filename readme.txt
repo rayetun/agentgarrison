@@ -3,9 +3,9 @@ Contributors:      rayetun
 Donate link:       https://wise.com/pay/me/mdrayhanu2
 Tags:              geo, llm optimizer, ai-seo, llms.txt, ai-bot
 Requires at least: 6.2
-Tested up to:      7.0
+Tested up to:      7.1
 Requires PHP:      7.4
-Stable tag:        1.0.0
+Stable tag:        1.1.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,7 @@ See whether AI assistants cite your site, control which AI bots can crawl it, an
 
 **Citation Monitor is the standout feature of AgentGarrison:** it queries AI assistants for your target questions and reports whether your site is actually cited, with a per-competitor breakdown, so you can measure and track your AI visibility over time — not only publish signals for AI to read, but see the result.
 
-**It combines thirteen modules in one plugin:** AI bot access control, llms.txt generation with a built-in validator, Markdown output for AI agents, an AI-ready Q&A block, local bot analytics with a live activity feed, LLM referral tracking, an AI readability content scorer, structured data with E-E-A-T trust signals, a citation monitor, a honeypot bot trap, email reports, white-label reports, and a composite AI Visibility Score.
+**It combines fourteen modules in one plugin:** AI bot access control, AI agent control (Abilities/MCP governance for WordPress 7.1), llms.txt generation with a built-in validator, Markdown output for AI agents, an AI-ready Q&A block, local bot analytics with a live activity feed, LLM referral tracking, an AI readability content scorer, structured data with E-E-A-T trust signals, a citation monitor, a honeypot bot trap, email reports, white-label reports, and a composite AI Visibility Score.
 
 **Everything runs on your own WordPress install:** analytics, logs, and settings are stored in your own database. The only feature that can reach out to an AI provider is the optional Citation Monitor, and it is built for the WordPress 7.0 AI Client: when the site owner configures a provider under Settings → Connectors, AgentGarrison uses the core AI Client and never handles credentials itself. 
 On WordPress 6.x (or when no core provider is set up) it falls back to your own API key. Every other feature works with no account and no external service.
@@ -43,6 +43,17 @@ Take back control of who can crawl your site. AgentGarrison ships with a built-i
 * **X-Robots-Tag header injection** — optional HTTP header block for bots that ignore robots.txt (`noai, noimageai`)
 * **Import wizard** — reads your existing `robots.txt` on first setup and maps it to the known bot list so no previous configuration is lost
 * **Per-bot "Last Seen" timestamps** — see exactly when each bot last visited your site
+
+---
+
+= 🛡️ AI Agent Control (WordPress 7.1) =
+
+WordPress 7.1 introduced the Abilities API mapped onto MCP, so AI agents can now *discover and run actions* on your site — not just read it. Agent Control is the write/act counterpart to Bot Control.
+
+* **MCP exposure governance** — decide which Abilities AI agents may access over MCP: allow or block a whole category (namespace) at once, or override individual Abilities, exactly like Bot Control. Built on the core `mcp_exposed_abilities` filter, with a master switch that exposes nothing until you turn it on.
+* **Non-invasive by default** — AgentGarrison does not change what agents can reach unless you explicitly opt in to managing exposure, so activation never disrupts an existing MCP setup.
+* **Agent activity log** — every Ability execution is recorded locally (which Ability, who triggered it, from where, and the outcome), giving you a full audit trail. Pruned automatically on your data-retention schedule.
+* **Runs on any version** — the module is dormant and harmless on WordPress 6.x; it begins governing and logging automatically once the Abilities API is present.
 
 ---
 
@@ -221,6 +232,12 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 
 == Changelog ==
 
+= 1.1.0 =
+* New module — AI Agent Control: governs which site Abilities are exposed to AI agents over MCP (WordPress 7.1 Abilities API), with category-level and per-Ability allow/block controls (grouped like Bot Control) and a master exposure switch that is off by default. Non-invasive — it never alters exposure unless you opt in to managing it.
+* New — Agent Activity Log: records every Ability an AI agent executes on your site (Ability, actor, source, outcome), stored locally and pruned on your retention schedule.
+* Both features are dormant on WordPress 6.x and activate automatically once the Abilities API is present.
+* Tested up to WordPress 7.1.
+
 = 1.0.0 =
 * Initial public release.
 * AI Bot Control: category-level and per-bot allow/block for 26+ known AI bots, robots.txt enforcement, optional X-Robots-Tag header, per-bot last-seen timestamps, and a robots.txt import wizard.
@@ -236,6 +253,9 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 * Privacy: suggested privacy-policy text and integration with WordPress Export/Erase Personal Data tools. Everything runs locally on your own site.
 
 == Upgrade Notice ==
+= 1.1.0 =
+Adds AI Agent Control for WordPress 7.1 — govern which Abilities AI agents can run over MCP, with a full activity log. Dormant on older WordPress.
+
 = 1.0.0 =
 First public release of AgentGarrison.
 

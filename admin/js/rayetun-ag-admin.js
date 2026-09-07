@@ -138,6 +138,90 @@
 		} );
 	} );
 
+	// ── Agent Control (WP 7.1 Abilities / MCP governance) ─────────────────────
+	// Reveal the exposure sub-options only when AgentGarrison manages exposure.
+	$( document ).on( 'change', '#ag-manage-exposure', function () {
+		$( '.js-exposure-managed' ).toggle( $( this ).is( ':checked' ) );
+	} );
+
+	// Category Allow/Block pill → update pills + inherited rows' status.
+	$( document ).on( 'change', '.js-ability-category-rule', function () {
+		var $radio = $( this );
+		var rule   = $radio.val(); // 'allow' or 'block'
+		var $card  = $radio.closest( '.agentgarrison-bot-category' );
+
+		$card.find( '.agentgarrison-radio-pill' ).removeClass( 'is-active' );
+		$radio.closest( '.agentgarrison-radio-pill' ).addClass( 'is-active' );
+
+		$card.find( '.js-ability-override' ).each( function () {
+			if ( 'inherit' === $( this ).val() ) {
+				var $pill = $( this ).closest( 'tr' ).find( '.js-ability-status-pill' );
+				$pill.text( 'allow' === rule ? 'Exposed' : 'Blocked' )
+					.toggleClass( 'is-allowed', 'allow' === rule )
+					.toggleClass( 'is-blocked', 'block' === rule );
+			}
+		} );
+	} );
+
+	// Per-ability override → update that row's status pill.
+	$( document ).on( 'change', '.js-ability-override', function () {
+		var $select   = $( this );
+		var val       = $select.val();
+		var $card     = $select.closest( '.agentgarrison-bot-category' );
+		var catRule   = $card.find( '.js-ability-category-rule:checked' ).val() || 'allow';
+		var effective = ( 'inherit' === val ) ? catRule : val;
+		var $pill     = $select.closest( 'tr' ).find( '.js-ability-status-pill' );
+
+		$pill.text( 'allow' === effective ? 'Exposed' : 'Blocked' )
+			.toggleClass( 'is-allowed', 'allow' === effective )
+			.toggleClass( 'is-blocked', 'block' === effective );
+	} );
+
+	$( document ).on( 'click', '.js-save-agent-settings', function () {
+		var $btn = $( this );
+		$btn.prop( 'disabled', true );
+
+		var abilityCategories = {};
+		$( '.js-ability-category-rule:checked' ).each( function () {
+			abilityCategories[ $( this ).data( 'category' ) ] = $( this ).val();
+		} );
+
+		var abilityOverrides = {};
+		$( '[name^="ability_overrides["]' ).each( function () {
+			var key = $( this ).attr( 'name' ).replace( 'ability_overrides[', '' ).replace( /]$/, '' );
+			abilityOverrides[ key ] = $( this ).val();
+		} );
+
+		bwPost( 'rayetun_ag_save_agent_settings', {
+			manage_exposure:    $( '#ag-manage-exposure' ).is( ':checked' ) ? 1 : 0,
+			expose_enabled:     $( '#ag-expose-enabled' ).is( ':checked' ) ? 1 : 0,
+			ability_categories: abilityCategories,
+			ability_overrides:  abilityOverrides,
+		}, function ( data ) {
+			$btn.prop( 'disabled', false );
+			showStatus( $( '.js-agent-status' ), data.message );
+		}, function ( data ) {
+			$btn.prop( 'disabled', false );
+			showStatus( $( '.js-agent-status' ), data.message, true );
+		} );
+	} );
+
+	$( document ).on( 'click', '.js-clear-agent-log', function () {
+		if ( ! window.confirm( bw.strings.confirm ) ) { return; }
+		var $btn = $( this );
+		$btn.prop( 'disabled', true );
+		bwPost( 'rayetun_ag_clear_agent_log', {}, function ( data ) {
+			$btn.prop( 'disabled', false );
+			$( '.js-agent-log-body' ).html(
+				'<tr><td colspan="5" class="agentgarrison-loading">No agent activity recorded yet.</td></tr>'
+			);
+			$( '.js-agent-event-count' ).text( '0' );
+			showStatus( $( '.js-agent-status' ), data.message );
+		}, function () {
+			$btn.prop( 'disabled', false );
+		} );
+	} );
+
 	// ── Honeypot ──────────────────────────────────────────────────────────────
 	function bwSaveHoneypot( clearBlocked, $btn ) {
 		$btn.prop( 'disabled', true );
