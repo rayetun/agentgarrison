@@ -101,15 +101,125 @@ class Rayetun_AG_Analytics {
 			return;
 		}
 
+		global $wp;
+		$request  = isset( $wp->request ) ? $wp->request : '';
+		$page_url = home_url( add_query_arg( array(), $request ) );
+
 		$bot = $this->detect_bot( $user_agent );
-		if ( ! $bot ) {
+		if ( $bot ) {
+			$this->log_visit( $bot, $page_url, $user_agent );
 			return;
 		}
 
-		global $wp;
-		$page_url = home_url( add_query_arg( array(), $wp->request ) );
+		// Not a known bot — if it still looks like a crawler, record it for the
+		// unknown-crawler heuristic (a possible new AI bot we don't ship yet).
+		if ( $this->is_bot_like( $user_agent ) ) {
+			$this->record_unknown_agent( $user_agent, '/' . ltrim( (string) $request, '/' ) );
+		}
+	}
 
-		$this->log_visit( $bot, $page_url, $user_agent );
+	// -------------------------------------------------------------------------
+	// Unknown-crawler heuristic
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Whether a user-agent that matched no known bot still looks automated.
+	 *
+	 * The token list is chosen to catch crawlers, HTTP libraries, and agent
+	 * frameworks while never matching mainstream human browser UA strings (which
+	 * contain none of these), so real visitors are never recorded.
+	 *
+	 * @param string $user_agent Raw UA.
+	 * @return bool
+	 */
+	private function is_bot_like( $user_agent ) {
+		$needles = array(
+			'bot', 'crawl', 'spider', 'slurp', 'scrape', 'fetch', 'wget', 'curl',
+			'python', 'go-http', 'okhttp', 'java', 'libwww', 'httpclient', 'http-client',
+			'headless', 'phantom', 'scrapy', 'archiver', 'feedfetcher', 'externalhit',
+			'externalagent', 'llm', 'gpt', 'claude', 'perplexity', 'anthropic', 'openai',
+			'monitor', 'uptime', 'semrush', 'ahrefs', 'dataprovider', 'facebookexternal',
+		);
+		$ua_lower = strtolower( $user_agent );
+		foreach ( $needles as $needle ) {
+			if ( false !== strpos( $ua_lower, $needle ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Upsert one aggregate row per unknown bot-like UA. A new page is only counted
+	 * when the path differs from the last one seen for that UA, so a client
+	 * hammering a single URL does not inflate the crawl count.
+	 *
+	 * @param string $user_agent Raw UA (stored, truncated to 255).
+	 * @param string $path       Request path.
+	 */
+	private function record_unknown_agent( $user_agent, $path ) {
+		global $wpdb;
+
+		$table = $wpdb->prefix . Rayetun_AG_DB::UNKNOWN_AGENTS_TABLE;
+		$ua    = substr( $user_agent, 0, 255 );
+		$path  = substr( $path, 0, 255 );
+		$hash  = md5( $ua );
+		$now   = current_time( 'mysql', true );
+
+		$row = $wpdb->get_row( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare( 'SELECT id, last_path FROM %i WHERE ua_hash = %s', $table, $hash )
+		);
+
+		if ( ! $row ) {
+			$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$table,
+				array(
+					'ua_hash'     => $hash,
+					'user_agent'  => $ua,
+					'hits'        => 1,
+					'last_path'   => $path,
+					'last_hit_at' => $now,
+					'first_seen'  => $now,
+					'last_seen'   => $now,
+				),
+				array( '%s', '%s', '%d', '%s', '%s', '%s', '%s' )
+			);
+			return;
+		}
+
+		$increment = ( $path !== $row->last_path ) ? 1 : 0;
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				'UPDATE %i SET hits = hits + %d, last_path = %s, last_hit_at = %s, last_seen = %s WHERE id = %d',
+				$table,
+				$increment,
+				$path,
+				$now,
+				$now,
+				$row->id
+			)
+		);
+	}
+
+	/**
+	 * Unknown crawlers that have crawled at least $min_hits pages, most active first.
+	 *
+	 * @param int $min_hits Minimum page count to surface.
+	 * @param int $limit    Max rows.
+	 * @return array
+	 */
+	public function get_unknown_crawlers( $min_hits = 5, $limit = 20 ) {
+		global $wpdb;
+		$table = $wpdb->prefix . Rayetun_AG_DB::UNKNOWN_AGENTS_TABLE;
+		return $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				'SELECT user_agent, hits, first_seen, last_seen FROM %i WHERE hits >= %d ORDER BY hits DESC, last_seen DESC LIMIT %d',
+				$table,
+				(int) $min_hits,
+				(int) $limit
+			),
+			ARRAY_A
+		);
 	}
 
 	private function log_visit( $bot, $page_url, $user_agent ) {
@@ -159,6 +269,20 @@ class Rayetun_AG_Analytics {
 		$table     = $wpdb->prefix . Rayetun_AG_DB::BOT_VISITS_TABLE;
 		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$wpdb->prepare( 'DELETE FROM %i WHERE visited_at < %s', $table, $cutoff )
+		);
+
+		// Prune unknown-crawler aggregates on the same retention window, then cap
+		// the table so a flood of one-off spoofed UAs cannot grow it unbounded.
+		$unknown = $wpdb->prefix . Rayetun_AG_DB::UNKNOWN_AGENTS_TABLE;
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare( 'DELETE FROM %i WHERE last_seen < %s', $unknown, $cutoff )
+		);
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				'DELETE FROM %i WHERE id NOT IN ( SELECT id FROM ( SELECT id FROM %i ORDER BY hits DESC, last_seen DESC LIMIT 500 ) t )',
+				$unknown,
+				$unknown
+			)
 		);
 	}
 

@@ -70,4 +70,49 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 			</tbody>
 		</table>
 	</div>
+
+	<!-- Unknown crawlers -->
+	<?php
+	$rayetun_ag_unknown = Rayetun_AG_Analytics::get_instance()->get_unknown_crawlers( 5, 20 );
+	if ( ! empty( $rayetun_ag_unknown ) ) :
+	?>
+	<div class="agentgarrison-card">
+		<div class="agentgarrison-card__header">
+			<div>
+				<h2 class="agentgarrison-card__title">🕵️ <?php esc_html_e( 'Unknown Crawlers', 'agentgarrison' ); ?></h2>
+				<p class="agentgarrison-card__desc"><?php esc_html_e( 'Bot-like visitors that crawled several pages but match none of AgentGarrison’s known bots — a possible new AI crawler worth watching. Only the user-agent is recorded, never an IP.', 'agentgarrison' ); ?></p>
+			</div>
+		</div>
+		<table class="agentgarrison-table">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'User-Agent', 'agentgarrison' ); ?></th>
+					<th class="agentgarrison-col-num"><?php esc_html_e( 'Pages', 'agentgarrison' ); ?></th>
+					<th><?php esc_html_e( 'First Seen', 'agentgarrison' ); ?></th>
+					<th><?php esc_html_e( 'Last Seen', 'agentgarrison' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $rayetun_ag_unknown as $rayetun_ag_ua ) : ?>
+				<tr>
+					<td><code class="agentgarrison-ua-token"><?php echo esc_html( $rayetun_ag_ua['user_agent'] ); ?></code></td>
+					<td class="agentgarrison-col-num"><?php echo absint( $rayetun_ag_ua['hits'] ); ?></td>
+					<td class="agentgarrison-last-seen">
+						<?php
+						/* translators: %s: human time diff */
+						printf( esc_html__( '%s ago', 'agentgarrison' ), esc_html( human_time_diff( strtotime( $rayetun_ag_ua['first_seen'] ), time() ) ) );
+						?>
+					</td>
+					<td class="agentgarrison-last-seen">
+						<?php
+						/* translators: %s: human time diff */
+						printf( esc_html__( '%s ago', 'agentgarrison' ), esc_html( human_time_diff( strtotime( $rayetun_ag_ua['last_seen'] ), time() ) ) );
+						?>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+	<?php endif; ?>
 </div>

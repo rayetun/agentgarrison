@@ -236,6 +236,7 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 = 1.2.0 =
 * New module — MCP for Agents: registers your published content as read-only WordPress Abilities (search content, page-as-Markdown, site overview) so AI agents can query your site over MCP. Governed by Agent Control and exposes only already-public content.
 * llms.txt — change history & drift alerts: logs a snapshot each time your llms.txt changes or its reachability flips, shown on the llms.txt screen, and emails you if the file breaks or unexpectedly loses a large share of its pages.
+* Analytics — unknown-crawler detection: flags bot-like visitors that crawl several pages but match no known bot (a possible new AI crawler), shown on the Analytics screen. Records the user-agent only, never an IP.
 
 = 1.1.0 =
 * New module — AI Agent Control: governs which site Abilities are exposed to AI agents over MCP (WordPress 7.1 Abilities API), with category-level and per-Ability allow/block controls (grouped like Bot Control) and a master exposure switch that is off by default. Non-invasive — it never alters exposure unless you opt in to managing it.

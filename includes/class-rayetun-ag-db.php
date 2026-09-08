@@ -11,8 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Rayetun_AG_DB {
 
-	const DB_VERSION            = '1.1';
+	const DB_VERSION            = '1.2';
 	const BOT_VISITS_TABLE      = 'rayetun_ag_bot_visits';
+	const UNKNOWN_AGENTS_TABLE  = 'rayetun_ag_unknown_agents';
 	const REFERRALS_TABLE       = 'rayetun_ag_llm_referrals';
 	const CITATION_KEYWORDS_TABLE = 'rayetun_ag_citation_keywords';
 	const CITATION_RESULTS_TABLE  = 'rayetun_ag_citation_results';
@@ -113,8 +114,28 @@ class Rayetun_AG_DB {
 			KEY created_at (created_at)
 		) $charset;";
 
+		// Unknown-crawler heuristic: one aggregate row per bot-like user-agent that
+		// matches no known bot. Kept separate from bot_visits so it never pollutes
+		// the known-bot analytics. No IP is stored — only the user-agent string.
+		$unknown_table = $wpdb->prefix . self::UNKNOWN_AGENTS_TABLE;
+		$sql_unknown   = "CREATE TABLE $unknown_table (
+			id          bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			ua_hash     char(32) NOT NULL DEFAULT '',
+			user_agent  varchar(255) NOT NULL DEFAULT '',
+			hits        int(10) unsigned NOT NULL DEFAULT 0,
+			last_path   varchar(255) NOT NULL DEFAULT '',
+			last_hit_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			first_seen  datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			last_seen   datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY (id),
+			UNIQUE KEY ua_hash (ua_hash),
+			KEY hits (hits),
+			KEY last_seen (last_seen)
+		) $charset;";
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql_visits );
+		dbDelta( $sql_unknown );
 		dbDelta( $sql_referrals );
 		dbDelta( $sql_kw );
 		dbDelta( $sql_res );
