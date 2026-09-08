@@ -237,6 +237,7 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 * New module — MCP for Agents: registers your published content as read-only WordPress Abilities (search content, page-as-Markdown, site overview) so AI agents can query your site over MCP. Governed by Agent Control and exposes only already-public content.
 * llms.txt — change history & drift alerts: logs a snapshot each time your llms.txt changes or its reachability flips, shown on the llms.txt screen, and emails you if the file breaks or unexpectedly loses a large share of its pages.
 * Analytics — unknown-crawler detection: flags bot-like visitors that crawl several pages but match no known bot (a possible new AI crawler), shown on the Analytics screen. Records the user-agent only, never an IP.
+* AI assists (optional): "Suggest with AI" drafts your llms.txt site summary, and "Get AI fixes" suggests concrete edits to raise a post's AI-readability score — both using your own configured AI provider (core AI Client on WP 7.0+, or a BYO key), only when clicked.
 
 = 1.1.0 =
 * New module — AI Agent Control: governs which site Abilities are exposed to AI agents over MCP (WordPress 7.1 Abilities API), with category-level and per-Ability allow/block controls (grouped like Bot Control) and a master exposure switch that is off by default. Non-invasive — it never alters exposure unless you opt in to managing it.
@@ -268,6 +269,8 @@ First public release of AgentGarrison.
 == External Services ==
 
 Every core AgentGarrison feature works entirely on your own server with no external requests. The only outbound connections are the optional, opt-in integrations below — none of them run unless you explicitly provide an API key.
+
+The optional AI assists — "Suggest with AI" for your llms.txt summary, and "Get AI fixes" in the Content Scorer — use the same AI provider you configure below (the WordPress core AI Client on 7.0+, or your own key). They send only the relevant content (your site name and recent page titles, or the post you are editing) and only when you click the button.
 
 On WordPress 7.0 and later, Citation Monitor uses the built-in core AI Client instead of the direct API calls below. In that case the site owner configures the AI provider once under Settings → Connectors, WordPress core manages the credentials and the outbound request, and AgentGarrison does not send data to any AI provider directly. The direct integrations below apply only on WordPress 6.x, or when a core AI provider is not configured.
 

@@ -81,7 +81,17 @@ $rayetun_ag_selected_types = (array) ( $rayetun_ag_llms_settings['post_types'] ?
 						<?php esc_html_e( 'Site Context', 'agentgarrison' ); ?>
 					</label>
 					<textarea id="ag-site-context" class="agentgarrison-textarea" rows="4" name="site_context" placeholder="<?php esc_attr_e( 'Describe your site in one or two sentences for AI models. E.g. "A WordPress plugin development blog covering best practices, security, and WP.org submission."', 'agentgarrison' ); ?>"><?php echo esc_textarea( $rayetun_ag_llms_settings['site_context'] ?? '' ); ?></textarea>
+					<?php if ( class_exists( 'Rayetun_AG_AI_Provider' ) && Rayetun_AG_AI_Provider::is_available() ) : ?>
+					<div class="agentgarrison-field-actions" style="margin-top:8px;">
+						<button type="button" class="agentgarrison-btn agentgarrison-btn--sm agentgarrison-btn--secondary js-ai-llms-summary">
+							✨ <?php esc_html_e( 'Suggest with AI', 'agentgarrison' ); ?>
+						</button>
+						<span class="agentgarrison-save-status js-ai-summary-status"></span>
+					</div>
+					<p class="agentgarrison-hint"><?php esc_html_e( 'This appears as the > description at the top of your llms.txt. “Suggest with AI” drafts it from your recent content using your configured AI provider.', 'agentgarrison' ); ?></p>
+					<?php else : ?>
 					<p class="agentgarrison-hint"><?php esc_html_e( 'This appears as the > description at the top of your llms.txt.', 'agentgarrison' ); ?></p>
+					<?php endif; ?>
 				</div>
 
 				<div class="agentgarrison-field">

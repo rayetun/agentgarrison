@@ -624,6 +624,47 @@
 		} );
 	} );
 
+	// ── AI assists (site's own provider via the AI Client / BYO key) ──────────
+	$( document ).on( 'click', '.js-ai-llms-summary', function () {
+		var $btn = $( this );
+		$btn.prop( 'disabled', true );
+		showStatus( $( '.js-ai-summary-status' ), 'Asking your AI provider…' );
+		bwPost( 'rayetun_ag_ai_llms_summary', {}, function ( data ) {
+			$btn.prop( 'disabled', false );
+			if ( data.summary ) {
+				$( '#ag-site-context' ).val( data.summary );
+			}
+			showStatus( $( '.js-ai-summary-status' ), 'Drafted — review and Save.' );
+		}, function ( data ) {
+			$btn.prop( 'disabled', false );
+			showStatus( $( '.js-ai-summary-status' ), data.message, true );
+		} );
+	} );
+
+	$( document ).on( 'click', '.js-ai-content-fixes', function () {
+		var $btn   = $( this );
+		var postId = $btn.data( 'post' );
+		var $out   = $btn.siblings( '.js-ai-fixes' );
+		$btn.prop( 'disabled', true );
+		$out.html( '<p class="agentgarrison-metabox__hint">Asking your AI provider…</p>' );
+		bwPost( 'rayetun_ag_ai_content_suggestions', { post_id: postId }, function ( data ) {
+			$btn.prop( 'disabled', false );
+			if ( ! data.suggestions || ! data.suggestions.length ) {
+				$out.html( '<p class="agentgarrison-metabox__hint">No suggestions returned.</p>' );
+				return;
+			}
+			var html = '<ul class="agentgarrison-ai-fixes__list">';
+			$.each( data.suggestions, function ( i, s ) {
+				html += '<li>' + bwEsc( s ) + '</li>';
+			} );
+			html += '</ul>';
+			$out.html( html );
+		}, function ( data ) {
+			$btn.prop( 'disabled', false );
+			$out.html( '<p class="agentgarrison-metabox__hint" style="color:#C62828;">' + bwEsc( data.message ) + '</p>' );
+		} );
+	} );
+
 	// ── Schema — Organization preview (built client-side from form values) ────
 	$( document ).on( 'click', '.js-preview-org-schema', function () {
 		var name   = $( '#ag-org-name' ).val() || document.title;

@@ -46,6 +46,7 @@ class Rayetun_AG_Llms_Txt {
 		add_action( 'wp_ajax_rayetun_ag_regenerate_llms', array( $this, 'handle_regenerate' ) );
 		add_action( 'wp_ajax_rayetun_ag_preview_llms', array( $this, 'handle_preview' ) );
 		add_action( 'wp_ajax_rayetun_ag_validate_llms', array( $this, 'handle_validate' ) );
+		add_action( 'wp_ajax_rayetun_ag_ai_llms_summary', array( $this, 'handle_ai_summary' ) );
 	}
 
 	private function load_settings() {
@@ -741,6 +742,53 @@ class Rayetun_AG_Llms_Txt {
 			wp_send_json_error( array( 'message' => __( 'Forbidden', 'agentgarrison' ) ), 403 );
 		}
 		wp_send_json_success( array( 'preview' => esc_textarea( $this->generate() ) ) );
+	}
+
+	/**
+	 * Draft the llms.txt site-summary sentence with the site's own AI provider
+	 * (core AI Client on WP 7.0+, or a bring-your-own key), from the site name,
+	 * tagline, and recent page titles. Zero cost to us — the request runs on the
+	 * owner's configured provider.
+	 */
+	public function handle_ai_summary() {
+		check_ajax_referer( 'rayetun_ag_ajax', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Forbidden', 'agentgarrison' ) ), 403 );
+		}
+		if ( ! class_exists( 'Rayetun_AG_AI_Provider' ) || ! Rayetun_AG_AI_Provider::is_available() ) {
+			wp_send_json_error( array( 'message' => __( 'No AI provider is configured. On WordPress 7.0+ connect one under Settings → Connectors, or add an API key on the Citation Monitor tab.', 'agentgarrison' ) ) );
+		}
+
+		$titles = array();
+		$posts  = get_posts( array(
+			'post_type'        => ! empty( $this->settings['post_types'] ) ? (array) $this->settings['post_types'] : array( 'post', 'page' ),
+			'post_status'      => 'publish',
+			'numberposts'      => 10,
+			'orderby'          => 'date',
+			'order'            => 'DESC',
+			'suppress_filters' => false,
+		) );
+		foreach ( $posts as $summary_post ) {
+			$titles[] = get_the_title( $summary_post );
+		}
+
+		$prompt = sprintf(
+			"Write a single concise sentence (max 25 words) describing what this website is about, for an llms.txt file that helps AI assistants understand the site. No quotes, no lists, just the sentence.\nSite name: %s\nTagline: %s\nRecent page titles: %s",
+			get_bloginfo( 'name' ),
+			get_bloginfo( 'description' ),
+			implode( '; ', array_slice( $titles, 0, 10 ) )
+		);
+
+		$result = Rayetun_AG_AI_Provider::complete( $prompt, null, array( 'max_tokens' => 120 ) );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		// Collapse to one clean line and strip any wrapping quotes the model added.
+		$summary = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( (string) $result['content'] ) ) );
+		$summary = trim( $summary, " \t\n\"'" );
+
+		wp_send_json_success( array( 'summary' => $summary ) );
 	}
 
 	// -------------------------------------------------------------------------

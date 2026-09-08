@@ -33,6 +33,7 @@ class Rayetun_AG_Content_Scorer {
 		add_action( 'wp_ajax_rayetun_ag_get_content_scores', array( $this, 'handle_get_scores' ) );
 		add_action( 'wp_ajax_rayetun_ag_dismiss_suggestion', array( $this, 'handle_dismiss_suggestion' ) );
 		add_action( 'wp_ajax_rayetun_ag_rescore_post', array( $this, 'handle_rescore' ) );
+		add_action( 'wp_ajax_rayetun_ag_ai_content_suggestions', array( $this, 'handle_ai_suggestions' ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -238,6 +239,12 @@ class Rayetun_AG_Content_Scorer {
 			</ul>
 			<?php endif; ?>
 			<p class="agentgarrison-metabox__hint"><?php esc_html_e( 'Score updates when you save. See full suggestions in AgentGarrison → Content Scorer.', 'agentgarrison' ); ?></p>
+				<?php if ( class_exists( 'Rayetun_AG_AI_Provider' ) && Rayetun_AG_AI_Provider::is_available() ) : ?>
+				<button type="button" class="agentgarrison-btn agentgarrison-btn--sm agentgarrison-btn--secondary js-ai-content-fixes" data-post="<?php echo absint( $post->ID ); ?>" style="margin-top:10px;width:100%;">
+					✨ <?php esc_html_e( 'Get AI fixes', 'agentgarrison' ); ?>
+				</button>
+				<div class="agentgarrison-ai-fixes js-ai-fixes" style="margin-top:10px;"></div>
+				<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -372,6 +379,63 @@ class Rayetun_AG_Content_Scorer {
 		}
 		$this->recalculate_score( $post_id );
 		wp_send_json_success( array( 'score' => (int) get_post_meta( $post_id, '_rayetun_ag_ai_score', true ) ) );
+	}
+
+	/**
+	 * Ask the site's own AI provider for concrete edits that would raise a post's
+	 * AI-readability score, focused on its weakest dimensions. Runs on the owner's
+	 * configured provider (core AI Client on WP 7.0+, or a BYO key) — no cost to us.
+	 */
+	public function handle_ai_suggestions() {
+		check_ajax_referer( 'rayetun_ag_ajax', 'nonce' );
+		$post_id = absint( $_POST['post_id'] ?? 0 );
+		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Forbidden', 'agentgarrison' ) ), 403 );
+		}
+		if ( ! class_exists( 'Rayetun_AG_AI_Provider' ) || ! Rayetun_AG_AI_Provider::is_available() ) {
+			wp_send_json_error( array( 'message' => __( 'No AI provider is configured. On WordPress 7.0+ connect one under Settings → Connectors, or add an API key on the Citation Monitor tab.', 'agentgarrison' ) ) );
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid post.', 'agentgarrison' ) ) );
+		}
+
+		$result = $this->score_post( $post );
+		$weak   = array();
+		foreach ( $result['dimensions'] as $dim ) {
+			if ( $dim['score'] < 70 ) {
+				$weak[] = $dim['label'] . ' (' . (int) $dim['score'] . '/100)';
+			}
+		}
+
+		$content = wp_trim_words( wp_strip_all_tags( $post->post_content ), 600, '' );
+		$prompt  = sprintf(
+			"You are optimizing a web article so AI assistants (ChatGPT, Claude, Perplexity) can understand and cite it. Give exactly 3 specific, actionable edits — reference the article's actual content. Focus on the weakest areas: %s. Return each suggestion on its own line starting with '- ', no preamble.\n\nTitle: %s\n\nContent:\n%s",
+			$weak ? implode( ', ', $weak ) : __( 'overall clarity and structure', 'agentgarrison' ),
+			$post->post_title,
+			$content
+		);
+
+		$response = Rayetun_AG_AI_Provider::complete( $prompt, null, array( 'max_tokens' => 400 ) );
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( array( 'message' => $response->get_error_message() ) );
+		}
+
+		$suggestions = array();
+		foreach ( preg_split( '/\n+/', (string) $response['content'] ) as $line ) {
+			$line = trim( wp_strip_all_tags( $line ) );
+			$line = ltrim( $line, "-*•0123456789. \t" );
+			if ( '' !== $line ) {
+				$suggestions[] = $line;
+			}
+		}
+		$suggestions = array_slice( $suggestions, 0, 5 );
+
+		wp_send_json_success( array(
+			'score'       => (int) $result['score'],
+			'suggestions' => $suggestions,
+		) );
 	}
 
 	public function handle_dismiss_suggestion() {
