@@ -19,16 +19,13 @@ See whether AI assistants cite your site, control which AI bots can crawl it, an
 
 **It combines fifteen modules in one plugin:** AI bot access control, AI agent control (Abilities/MCP governance for WordPress 7.1), read-only MCP content tools for AI agents, llms.txt generation with a built-in validator, Markdown output for AI agents, an AI-ready Q&A block, local bot analytics with a live activity feed, LLM referral tracking, an AI readability content scorer, structured data with E-E-A-T trust signals, a citation monitor, a honeypot bot trap, email reports, white-label reports, and a composite AI Visibility Score.
 
-**Everything runs on your own WordPress install:** analytics, logs, and settings are stored in your own database. The only feature that can reach out to an AI provider is the optional Citation Monitor, and it is built for the WordPress 7.0 AI Client: when the site owner configures a provider under Settings → Connectors, AgentGarrison uses the core AI Client and never handles credentials itself. 
-On WordPress 6.x (or when no core provider is set up) it falls back to your own API key. Every other feature works with no account and no external service.
+**Everything runs on your own WordPress install:** analytics, logs, and settings live in your own database, and every core feature works with no account and no external service. The only optional outbound calls — the Citation Monitor and the AI assists — use the WordPress 7.0+ core AI Client (or your own key); see External Services below.
 
 = How AgentGarrison is organised =
 
-* **Modular**: each feature is a module you can enable or disable individually, so only what you use runs on your site
-* **Local first**: bot analytics, referral logs, and scores are stored in your own database
-* **Free features work out of the box**: no signup, no API key required
-* **Built on WordPress standards**: on WordPress 7.0+ it uses the core AI Client for any AI provider access, so the site owner configures the provider once under Settings → Connectors and credentials are managed by core, not the plugin
-* **Plays well with SEO plugins**: schema output automatically defers overlapping types when another SEO plugin is active, to prevent duplicate markup
+* **Modular & local-first**: enable only the modules you use; analytics, logs, and scores stay in your own database — no signup or API key required
+* **Built on WordPress standards**: on WordPress 7.0+ it uses the core AI Client, so providers are configured once under Settings → Connectors and credentials are managed by core, not the plugin
+* **Plays well with SEO plugins**: schema output defers overlapping types when another SEO plugin is active, preventing duplicate markup
 
 ---
 
