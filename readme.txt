@@ -1,15 +1,15 @@
-=== AgentGarrison – AI Bot Control & LLM Optimizer ===
+=== AgentGarrison – AI Visibility, AEO, GEO, AI Bot & Agent Control ===
 Contributors:      rayetun
 Donate link:       https://wise.com/pay/me/mdrayhanu2
-Tags:              geo, llm optimizer, ai-seo, llms.txt, ai-bot
+Tags:              ai-bot, ai-seo, geo, llms.txt, ai visibility
 Requires at least: 6.2
-Tested up to:      7.1
+Tested up to:      7.1.1
 Requires PHP:      7.4
-Stable tag:        1.1.0
+Stable tag:        1.2.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-See whether AI assistants cite your site, control which AI bots can crawl it, and optimize content for ChatGPT, Perplexity, Claude & Gemini.
+AI visibility toolkit: GEO/AEO optimization, llms.txt, AI bot & agent control, and citation tracking for ChatGPT, Perplexity, Claude & Gemini.
 
 == Description ==
 
@@ -235,6 +235,8 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 * llms.txt — change history & drift alerts: logs a snapshot each time your llms.txt changes or its reachability flips, shown on the llms.txt screen, and emails you if the file breaks or unexpectedly loses a large share of its pages.
 * Analytics — unknown-crawler detection: flags bot-like visitors that crawl several pages but match no known bot (a possible new AI crawler), shown on the Analytics screen. Records the user-agent only, never an IP.
 * AI assists (optional): "Suggest with AI" drafts your llms.txt site summary, and "Get AI fixes" suggests concrete edits to raise a post's AI-readability score — both using your own configured AI provider (core AI Client on WP 7.0+, or a BYO key), only when clicked.
+* Renamed to "AI Visibility, AEO, GEO, AI Bot & Agent Control" to reflect what the plugin now does across AI search. Same plugin, same slug, no settings change.
+* Tested up to WordPress 7.1.1.
 
 = 1.1.0 =
 * New module — AI Agent Control: governs which site Abilities are exposed to AI agents over MCP (WordPress 7.1 Abilities API), with category-level and per-Ability allow/block controls (grouped like Bot Control) and a master exposure switch that is off by default. Non-invasive — it never alters exposure unless you opt in to managing it.
@@ -257,6 +259,9 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 * Privacy: suggested privacy-policy text and integration with WordPress Export/Erase Personal Data tools. Everything runs locally on your own site.
 
 == Upgrade Notice ==
+= 1.2.0 =
+Adds MCP content tools, llms.txt change history & drift alerts, unknown-crawler detection, and optional AI assists. Tested up to WordPress 7.1.1.
+
 = 1.1.0 =
 Adds AI Agent Control for WordPress 7.1 — govern which Abilities AI agents can run over MCP, with a full activity log. Dormant on older WordPress.
 
