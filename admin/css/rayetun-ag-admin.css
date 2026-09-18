@@ -516,6 +516,29 @@
   color: var(--ag-primary);
 }
 
+/* MCP registered tools list */
+.agentgarrison-mcp-tools { list-style: none; margin: 0; padding: 0; }
+.agentgarrison-mcp-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 0;
+  border-top: 1px solid var(--ag-border);
+}
+.agentgarrison-mcp-tool:first-child { border-top: 0; padding-top: 2px; }
+.agentgarrison-mcp-tool:last-child { padding-bottom: 2px; }
+.agentgarrison-mcp-tool__name {
+  font-size: 12px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  background: var(--ag-surface-alt);
+  border: 1px solid var(--ag-border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  color: var(--ag-primary);
+}
+.agentgarrison-mcp-tool__desc { font-size: 13px; line-height: 1.5; color: var(--ag-muted); }
+
 /* Status pill in table */
 .agentgarrison-status-pill {
   display: inline-flex;
@@ -1104,6 +1127,8 @@ select.agentgarrison-select:focus {
 /* Badges */
 .agentgarrison-dark .agentgarrison-badge             { background: #0A2028; color: var(--ag-primary); }
 .agentgarrison-dark .agentgarrison-ua-token          { background: #0F191D; border-color: var(--ag-border); color: var(--ag-primary); }
+.agentgarrison-dark .agentgarrison-mcp-tool__name    { background: #0F191D; border-color: var(--ag-border); color: var(--ag-primary); }
+.agentgarrison-dark .agentgarrison-mcp-tool          { border-top-color: var(--ag-border); }
 
 /* Checklist */
 .agentgarrison-dark .agentgarrison-checklist-item    { background: #1E2A2E; border-color: var(--ag-border); }

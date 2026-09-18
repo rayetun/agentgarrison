@@ -3,7 +3,7 @@
  * Plugin Name:       AgentGarrison – AI Visibility, AEO, GEO, AI Bot & Agent Control
  * Plugin URI:        https://wordpress.org/plugins/agentgarrison/
  * Description:       AI visibility toolkit: GEO/AEO optimization, llms.txt, AI bot & agent control, and citation tracking for ChatGPT, Perplexity, Claude & Gemini. No account needed.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Md Rayhan Uddin
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'RAYETUN_AG_VERSION', '1.2.0' );
+define( 'RAYETUN_AG_VERSION', '1.2.1' );
 define( 'RAYETUN_AG_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RAYETUN_AG_URL', plugin_dir_url( __FILE__ ) );
 define( 'RAYETUN_AG_FILE', __FILE__ );

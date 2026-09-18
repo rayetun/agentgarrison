@@ -5,7 +5,7 @@ Tags:              ai-bot, ai-seo, geo, llms.txt, ai visibility
 Requires at least: 6.2
 Tested up to:      7.1
 Requires PHP:      7.4
-Stable tag:        1.2.0
+Stable tag:        1.2.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -230,6 +230,10 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 
 == Changelog ==
 
+= 1.2.1 =
+* Fix — MCP for Agents: the screen now correctly detects an active MCP Adapter. It previously showed "No MCP Adapter detected" on the admin page even when the adapter was installed, because the check only ran during REST requests.
+* Polished the Registered Tools list on the MCP for Agents screen.
+
 = 1.2.0 =
 * New module — MCP for Agents: registers your published content as read-only WordPress Abilities (search content, page-as-Markdown, site overview) so AI agents can query your site over MCP. Governed by Agent Control and exposes only already-public content.
 * llms.txt — change history & drift alerts: logs a snapshot each time your llms.txt changes or its reachability flips, shown on the llms.txt screen, and emails you if the file breaks or unexpectedly loses a large share of its pages.
@@ -258,6 +262,9 @@ No. The Citation Monitor ships with a Demo Mode that generates realistic citatio
 * Privacy: suggested privacy-policy text and integration with WordPress Export/Erase Personal Data tools. Everything runs locally on your own site.
 
 == Upgrade Notice ==
+= 1.2.1 =
+Fixes MCP Adapter detection on the MCP for Agents screen.
+
 = 1.2.0 =
 Adds MCP content tools, llms.txt change history & drift alerts, unknown-crawler detection, and optional AI assists.
 

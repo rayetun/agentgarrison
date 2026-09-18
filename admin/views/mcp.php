@@ -60,17 +60,17 @@ $rayetun_ag_mcp_tools     = Rayetun_AG_MCP::tool_names();
 			<div class="agentgarrison-card">
 				<h2 class="agentgarrison-card__title"><?php esc_html_e( 'Registered tools', 'agentgarrison' ); ?></h2>
 				<ul class="agentgarrison-mcp-tools">
-					<li>
-						<code>agentgarrison/search-content</code>
-						<span><?php esc_html_e( 'Search published posts and pages by keyword.', 'agentgarrison' ); ?></span>
+					<li class="agentgarrison-mcp-tool">
+						<code class="agentgarrison-mcp-tool__name">agentgarrison/search-content</code>
+						<span class="agentgarrison-mcp-tool__desc"><?php esc_html_e( 'Search published posts and pages by keyword.', 'agentgarrison' ); ?></span>
 					</li>
-					<li>
-						<code>agentgarrison/get-page-markdown</code>
-						<span><?php esc_html_e( 'Return a page as clean Markdown by URL or ID.', 'agentgarrison' ); ?></span>
+					<li class="agentgarrison-mcp-tool">
+						<code class="agentgarrison-mcp-tool__name">agentgarrison/get-page-markdown</code>
+						<span class="agentgarrison-mcp-tool__desc"><?php esc_html_e( 'Return a page as clean Markdown, by URL or ID.', 'agentgarrison' ); ?></span>
 					</li>
-					<li>
-						<code>agentgarrison/get-site-overview</code>
-						<span><?php esc_html_e( 'Site name, description, and most recent content.', 'agentgarrison' ); ?></span>
+					<li class="agentgarrison-mcp-tool">
+						<code class="agentgarrison-mcp-tool__name">agentgarrison/get-site-overview</code>
+						<span class="agentgarrison-mcp-tool__desc"><?php esc_html_e( 'Site name, description, and most recent content.', 'agentgarrison' ); ?></span>
 					</li>
 				</ul>
 				<p class="agentgarrison-hint" style="margin-top:12px;">
