@@ -91,9 +91,13 @@ class Rayetun_AG_MCP {
 		return function_exists( 'wp_register_ability' );
 	}
 
-	/** @return bool Whether the MCP Adapter appears to be active this request. */
+	/** @return bool Whether the WordPress MCP Adapter is present and active. */
 	public static function mcp_adapter_active() {
-		return did_action( 'mcp_adapter_init' ) > 0;
+		// The adapter only fires mcp_adapter_init on rest_api_init (or on init under
+		// WP-CLI), so did_action() is false on a normal admin page load even when the
+		// adapter is installed and active. Detect its presence by class instead, and
+		// keep the action check as a fallback for other contexts/versions.
+		return class_exists( '\WP\MCP\Core\McpAdapter' ) || did_action( 'mcp_adapter_init' ) > 0;
 	}
 
 	/** @return string[] The tool names this module registers. */
